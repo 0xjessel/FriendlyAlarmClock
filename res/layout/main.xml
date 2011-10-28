@@ -8,9 +8,13 @@
     android:id="@+id/actionbar"
     app:title="@string/app_name"
     style="@style/ActionBar" />
-  
-  <TextView
-    android:id="@+id/tv"
+  <com.viewpagerindicator.TitlePageIndicator
+    android:id="@+id/indicator"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" />
+  <android.support.v4.view.ViewPager
+    android:id="@+id/viewpager"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"/>
+
 </LinearLayout>

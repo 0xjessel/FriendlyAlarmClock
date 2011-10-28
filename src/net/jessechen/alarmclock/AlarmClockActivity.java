@@ -1,29 +1,42 @@
 package net.jessechen.alarmclock;
 
-import net.jessechen.messages.MessagesUtil;
 import net.jessechen.socialalarmclock.R;
+import secret.Secret;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
-import android.widget.TextView;
 
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
+import com.viewpagerindicator.TitlePageIndicator;
 
 public class AlarmClockActivity extends Activity {
 
 	private SharedPreferences mPrefs;
-	private final String APP_ID = getApplicationContext().getString(R.string.app_id);
-	Facebook facebook = new Facebook(APP_ID);
+	private Facebook facebook = new Facebook(Secret.getAppId());
 
+	private ViewPager mPager;
+	private mPageAdapter mAdapter;
+	private TitlePageIndicator mIndicator;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        mAdapter = new mPageAdapter(getApplicationContext());
+        mPager = (ViewPager) findViewById(R.id.viewpager);
+        mPager.setAdapter(mAdapter);
+        mIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
+        mIndicator.setViewPager(mPager);
+        
+        mPager.setCurrentItem(1);
         
         /*
          * Get existing access_token if any
@@ -62,8 +75,6 @@ public class AlarmClockActivity extends Activity {
                 public void onCancel() {}
             });
         }
-        TextView tv = (TextView) findViewById(R.id.tv);
-        tv.setText(MessagesUtil.read(654321).toString());
         
     }
 
