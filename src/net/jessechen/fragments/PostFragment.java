@@ -1,5 +1,8 @@
 package net.jessechen.fragments;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 import com.facebook.android.Facebook;
 
 import net.jessechen.socialalarmclock.R;
@@ -37,5 +40,11 @@ public class PostFragment extends Fragment {
 		textView.setTextColor(Color.WHITE);
 		textView.setTextSize(30);
 		return view;
+	}
+
+	private String getAppUsers() throws MalformedURLException, IOException {
+		Bundle params = new Bundle();
+		params.putString("method", "friends.getAppUsers");
+		return facebook.request(params);
 	}
 }

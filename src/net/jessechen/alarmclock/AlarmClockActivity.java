@@ -75,11 +75,10 @@ public class AlarmClockActivity extends FragmentActivity {
 							facebook.getAccessExpires());
 					editor.commit();
 
-					Bundle params = new Bundle();
-					params.putString("message", "check me out");
-					params.putString("title", "Send an app request");
-					facebook.dialog(ctx, "apprequests", params,
-							new AppRequestsListener());
+					downloadProfilePic();
+					sendAppRequests();
+					
+					
 				}
 
 				@Override
@@ -104,6 +103,19 @@ public class AlarmClockActivity extends FragmentActivity {
 		facebook.authorizeCallback(requestCode, resultCode, data);
 	}
 
+	private void downloadProfilePic() {
+		String FILENAME = "profile_pic";
+		
+	}
+	
+	private void sendAppRequests() {
+		Bundle params = new Bundle();
+		params.putString("message", "check me out");
+		params.putString("title", "Send an app request");
+		facebook.dialog(ctx, "apprequests", params,
+				new AppRequestsListener());					
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
