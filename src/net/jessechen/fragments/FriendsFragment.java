@@ -15,12 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class PostFragment extends Fragment {
+public class FriendsFragment extends Fragment {
 
 	private Context ctx;
 	private Facebook facebook;
 
-	public PostFragment(Context c, Facebook fb) {
+	public FriendsFragment(Context c, Facebook fb) {
 		ctx = c;
 		facebook = fb;
 	}
