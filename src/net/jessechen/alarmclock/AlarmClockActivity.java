@@ -2,13 +2,13 @@ package net.jessechen.alarmclock;
 
 import net.jessechen.fblisteners.AppRequestsListener;
 import net.jessechen.fblisteners.LogoutListener;
+import net.jessechen.secret.Secret;
 import net.jessechen.socialalarmclock.R;
-import secret.Secret;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,16 +21,15 @@ import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 import com.viewpagerindicator.TitlePageIndicator;
 
-
-public class AlarmClockActivity extends Activity {
+public class AlarmClockActivity extends FragmentActivity {
 
 	private Context ctx;
 	private SharedPreferences mPrefs;
 	private Facebook facebook = new Facebook(Secret.getAppId());
 	private AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(facebook);
 
-	private ViewPager mPager;
-	private mPageAdapter mAdapter;
+	private ViewPager mViewPager;
+	private MyFragmentPagerAdapter mAdapter;
 	private TitlePageIndicator mIndicator;
 
 	@Override
@@ -40,14 +39,15 @@ public class AlarmClockActivity extends Activity {
 		setContentView(R.layout.main);
 
 		ctx = this;
-		
-		mAdapter = new mPageAdapter(ctx);
-		mPager = (ViewPager) findViewById(R.id.viewpager);
-		mPager.setAdapter(mAdapter);
-		mIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
-		mIndicator.setViewPager(mPager);
 
-		mPager.setCurrentItem(1);
+		mAdapter = new MyFragmentPagerAdapter(ctx, facebook,
+				getSupportFragmentManager());
+		mViewPager = (ViewPager) findViewById(R.id.viewpager);
+		mViewPager.setAdapter(mAdapter);
+		mIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
+		mIndicator.setViewPager(mViewPager);
+
+		mViewPager.setCurrentItem(1);
 
 		/*
 		 * Get existing access_token if any
@@ -61,7 +61,7 @@ public class AlarmClockActivity extends Activity {
 		if (expires != 0) {
 			facebook.setAccessExpires(expires);
 		}
-		
+
 		/*
 		 * Only call authorize if the access_token has expired.
 		 */
@@ -78,7 +78,8 @@ public class AlarmClockActivity extends Activity {
 					Bundle params = new Bundle();
 					params.putString("message", "check me out");
 					params.putString("title", "Send an app request");
-					facebook.dialog(ctx, "apprequests", params, new AppRequestsListener());
+					facebook.dialog(ctx, "apprequests", params,
+							new AppRequestsListener());
 				}
 
 				@Override
@@ -106,10 +107,11 @@ public class AlarmClockActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(0, 0, 0, "Sign Out").setIcon(R.drawable.ic_logout);
-		menu.add(0, 1, 0, "Settings").setIcon(
+		menu.add(0, 0, 0, getString(R.string.signout)).setIcon(
+				android.R.drawable.ic_notification_clear_all);
+		menu.add(0, 1, 0, getString(R.string.settings)).setIcon(
 				android.R.drawable.ic_menu_preferences);
-		menu.add(0, 2, 0, "About").setIcon(
+		menu.add(0, 2, 0, getString(R.string.about)).setIcon(
 				android.R.drawable.ic_menu_info_details);
 		return true;
 	}
@@ -119,6 +121,8 @@ public class AlarmClockActivity extends Activity {
 		switch (item.getItemId()) {
 		case 0: // logout
 			mAsyncRunner.logout(ctx, new LogoutListener());
+			Toast.makeText(ctx, "access_token revoked", Toast.LENGTH_SHORT)
+					.show();
 			return true;
 		case 1: // settings
 			Toast.makeText(ctx, "Settings", Toast.LENGTH_SHORT).show();
