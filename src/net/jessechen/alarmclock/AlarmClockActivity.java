@@ -1,7 +1,6 @@
 package net.jessechen.alarmclock;
 
 import net.jessechen.messages.MessagesUtil;
-import net.jessechen.secret.Secret;
 import net.jessechen.socialalarmclock.R;
 import android.app.Activity;
 import android.content.Intent;
@@ -18,12 +17,14 @@ import com.facebook.android.FacebookError;
 public class AlarmClockActivity extends Activity {
 
 	private SharedPreferences mPrefs;
-    Facebook facebook = new Facebook(Secret.getAppId());
+	private final String APP_ID = getApplicationContext().getString(R.string.app_id);
+	Facebook facebook = new Facebook(APP_ID);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
         /*
          * Get existing access_token if any
          */
