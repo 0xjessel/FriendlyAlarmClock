@@ -1,5 +1,6 @@
 package net.jessechen.alarmclock;
 
+import net.jessechen.fblisteners.AppRequestsListener;
 import net.jessechen.fblisteners.LogoutListener;
 import net.jessechen.socialalarmclock.R;
 import secret.Secret;
@@ -60,7 +61,7 @@ public class AlarmClockActivity extends Activity {
 		if (expires != 0) {
 			facebook.setAccessExpires(expires);
 		}
-
+		
 		/*
 		 * Only call authorize if the access_token has expired.
 		 */
@@ -74,6 +75,10 @@ public class AlarmClockActivity extends Activity {
 							facebook.getAccessExpires());
 					editor.commit();
 
+					Bundle params = new Bundle();
+					params.putString("message", "check me out");
+					params.putString("title", "Send an app request");
+					facebook.dialog(ctx, "apprequests", params, new AppRequestsListener());
 				}
 
 				@Override
