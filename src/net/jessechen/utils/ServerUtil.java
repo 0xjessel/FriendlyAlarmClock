@@ -21,11 +21,12 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-public class MessagesUtil {
+public class ServerUtil {
 
-	private static final String BASE_URL = "http://www.socialalarmclock.jessechen.net";
-	private static final String POST_MSG_URL = BASE_URL + "/postMessage.php";
-	private static final String READ_MSG_URL = BASE_URL + "/readMessages.php";
+	public static final String BASE_URL = "http://www.socialalarmclock.jessechen.net";
+	public static final String POST_ALARM_URL = BASE_URL + "/opengraph/alarm.php";
+	public static final String NAMESPACE = "socialalarmclock";
+	public static final String SET = "set";
 
 	public static boolean post(int from, int to, String msg) {
 		String result = "";
@@ -39,7 +40,7 @@ public class MessagesUtil {
 		// http post
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost(POST_MSG_URL);
+			HttpPost httppost = new HttpPost(POST_ALARM_URL);
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 			HttpResponse response = httpclient.execute(httppost);
@@ -75,7 +76,7 @@ public class MessagesUtil {
 		// http post
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost(READ_MSG_URL);
+			HttpPost httppost = new HttpPost(POST_ALARM_URL);
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 			HttpResponse response = httpclient.execute(httppost);

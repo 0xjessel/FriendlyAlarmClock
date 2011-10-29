@@ -52,12 +52,14 @@ public class AlarmClockActivity extends FragmentActivity {
 		setContentView(R.layout.main);
 
 		ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
-		InputStream is = getProfilePicture(); 
-		actionBar.setHomeLogo(is);
-		
+		InputStream is = getProfilePicture();
+		if (is != null) {
+			actionBar.setHomeLogo(is);
+		}
+
 		ctx = this;
 
-		mAdapter = new MyFragmentPagerAdapter(ctx, facebook,
+		mAdapter = new MyFragmentPagerAdapter(ctx, facebook, mAsyncRunner, 
 				getSupportFragmentManager());
 		mViewPager = (ViewPager) findViewById(R.id.viewpager);
 		mViewPager.setAdapter(mAdapter);
@@ -83,34 +85,35 @@ public class AlarmClockActivity extends FragmentActivity {
 		 * Only call authorize if the access_token has expired.
 		 */
 		if (!facebook.isSessionValid()) {
-			facebook.authorize(this, new String[] {}, new DialogListener() {
-				@Override
-				public void onComplete(Bundle values) {
-					SharedPreferences.Editor editor = mPrefs.edit();
-					editor.putString("access_token", facebook.getAccessToken());
-					editor.putLong("access_expires",
-							facebook.getAccessExpires());
-					getUserInfo(editor);
-					editor.commit();
-					
-					downloadProfilePic();
+			facebook.authorize(this, new String[] { "publish_actions" },
+					new DialogListener() {
+						@Override
+						public void onComplete(Bundle values) {
+							SharedPreferences.Editor editor = mPrefs.edit();
+							editor.putString("access_token",
+									facebook.getAccessToken());
+							editor.putLong("access_expires",
+									facebook.getAccessExpires());
+							getUserInfo(editor);
+							editor.commit();
 
+							downloadProfilePic();
 
-					sendAppRequests();
-				}
+							sendAppRequests();
+						}
 
-				@Override
-				public void onFacebookError(FacebookError error) {
-				}
+						@Override
+						public void onFacebookError(FacebookError error) {
+						}
 
-				@Override
-				public void onError(DialogError e) {
-				}
+						@Override
+						public void onError(DialogError e) {
+						}
 
-				@Override
-				public void onCancel() {
-				}
-			});
+						@Override
+						public void onCancel() {
+						}
+					});
 		}
 	}
 
@@ -136,60 +139,63 @@ public class AlarmClockActivity extends FragmentActivity {
 			String jsonUser = facebook.request("me");
 			JSONObject obj = new JSONObject(jsonUser);
 			editor.putString("uid", obj.optString("id", "-1")); // get userid
-			editor.putString("name", obj.optString("name", "John Doe")); // get name
+			editor.putString("name", obj.optString("name", "John Doe")); // get
+																			// name
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	private void downloadProfilePic() {
 		final String BASE_URL = "https://graph.facebook.com/";
 		String uid = mPrefs.getString("uid", "-1");
 		InputStream is = null;
-		
+
 		try {
 			if (!uid.equals("-1")) {
-				is = new URL(BASE_URL + uid + "/picture?type=large").openStream();
+				is = new URL(BASE_URL + uid + "/picture?type=large")
+						.openStream();
 				byte[] pic = readBytes(is);
-				FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+				FileOutputStream fos = openFileOutput(FILENAME,
+						Context.MODE_PRIVATE);
 				fos.write(pic);
 				fos.close();
 			} else {
-				
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public byte[] readBytes(InputStream inputStream) throws IOException {
-		  // this dynamically extends to take the bytes you read
-		  ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-		  
-		  // this is storage overwritten on each iteration with bytes
-		  int bufferSize = 1024;
-		  byte[] buffer = new byte[bufferSize];
+		// this dynamically extends to take the bytes you read
+		ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
 
-		  // we need to know how may bytes were read to write them to the byteBuffer
-		  int len = 0;
-		  while ((len = inputStream.read(buffer)) != -1) {
-		    byteBuffer.write(buffer, 0, len);
-		  }
+		// this is storage overwritten on each iteration with bytes
+		int bufferSize = 1024;
+		byte[] buffer = new byte[bufferSize];
 
-		  // and then we can return your byte array.
-		  return byteBuffer.toByteArray();
+		// we need to know how may bytes were read to write them to the
+		// byteBuffer
+		int len = 0;
+		while ((len = inputStream.read(buffer)) != -1) {
+			byteBuffer.write(buffer, 0, len);
+		}
+
+		// and then we can return your byte array.
+		return byteBuffer.toByteArray();
 	}
 
 	private void sendAppRequests() {
 		Bundle params = new Bundle();
 		params.putString("message", "check me out");
 		params.putString("title", "Send an app request");
-		facebook.dialog(ctx, "apprequests", params,
-				new AppRequestsListener());					
+		facebook.dialog(ctx, "apprequests", params, new AppRequestsListener());
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
