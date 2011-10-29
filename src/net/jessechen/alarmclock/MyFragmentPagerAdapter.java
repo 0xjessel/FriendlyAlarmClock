@@ -33,11 +33,11 @@ public class MyFragmentPagerAdapter extends FragmentPagerAdapter implements
 	public Fragment getItem(int position) {
 		switch (position) {
 		case 0:
-			return new HistoryFragment(ctx, facebook);
+			return new HistoryFragment(facebook);
 		case 1:
-			return new AlarmsFragment(ctx, facebook);
+			return new AlarmsFragment(facebook);
 		case 2:
-			return new FriendsFragment(ctx, facebook);
+			return new FriendsFragment(facebook);
 		default:
 			return null;
 		}
