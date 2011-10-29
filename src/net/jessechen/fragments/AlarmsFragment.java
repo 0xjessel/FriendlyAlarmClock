@@ -130,8 +130,7 @@ public class AlarmsFragment extends ListFragment {
 				new AddToTimelineListener(am, getActivity(), dialog), null);
 	}
 
-	private LinkedList<CommentModel> readFromPost(AlarmModel am) {
-		String pid = Integer.toString(am.getPid());
+	private LinkedList<CommentModel> readFromPost(String pid) {
 		final LinkedList<CommentModel> comments = new LinkedList<CommentModel>();
 		mAsyncFacebookRunner.request(pid + "/comments", new RequestListener() {
 			
