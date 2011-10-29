@@ -4,14 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import net.jessechen.alarmclock.AlarmReceiver;
 import net.jessechen.alarmclock.EditAlarmActivity;
 import net.jessechen.fblisteners.AddToTimelineListener;
 import net.jessechen.models.AlarmModel;
@@ -20,7 +18,13 @@ import net.jessechen.socialalarmclock.R;
 import net.jessechen.utils.AlarmAdapter;
 import net.jessechen.utils.ServerUtil;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -30,8 +34,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.facebook.android.AsyncFacebookRunner;
@@ -131,12 +135,46 @@ public class AlarmsFragment extends ListFragment {
 				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
 
 				addToTimeline(alarm);
+				addToAlarmManager(alarm);
 			}
 			break;
 		default:
 			super.onActivityResult(requestCode, resultCode, data);
 			break;
 		}
+	}
+
+	private void addToAlarmManager(AlarmModel alarm) {
+		// Date now = new Date();
+		// Date alarmDate = new Date(now.getYear(), now.getMonth(),
+		// now.getDay(),
+		// alarm.getHour(), alarm.getMinute());
+		Calendar cal = Calendar.getInstance();
+//		cal.set(cal.HOUR_OF_DAY, alarm.getHour());
+//		cal.set(cal.MINUTE, alarm.getMinute());
+		// cal.set(now.getYear(), now.getMonth(), now.getDay(), alarm.getHour(),
+		// alarm.getMinute());
+
+		// if (now.after(alarmDate)) {
+		// // get a Calendar object with current time
+		// // add 5 minutes to the calendar object
+		// cal.roll(Calendar.DAY_OF_YEAR, true);
+		// }
+
+		Intent intent = new Intent(getActivity(), AlarmReceiver.class);
+		intent.putExtra("alarm_message", String.valueOf(alarm.getPid()));
+//		intent.setAction("alarm_message");
+		// In reality, you would want to have a static variable for the request
+		// code instead of 192837
+		PendingIntent sender = PendingIntent.getBroadcast(getActivity(),
+				AlarmReceiver.REQUEST_CODE, intent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+
+		// Get the AlarmManager service
+		AlarmManager am = (AlarmManager) getActivity().getSystemService(
+				Context.ALARM_SERVICE);
+		// am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
+		am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() + 3000, sender);
 	}
 
 	private void addToTimeline(AlarmModel am) {
@@ -156,26 +194,28 @@ public class AlarmsFragment extends ListFragment {
 	}
 
 	private LinkedList<CommentModel> readFromPost(AlarmModel am) {
-		String pid = Integer.toString(am.getPid());
+		String pid = Long.toString(am.getPid());
 		final LinkedList<CommentModel> comments = new LinkedList<CommentModel>();
 		mAsyncFacebookRunner.request(pid + "/comments", new RequestListener() {
-			
+
 			@Override
-			public void onMalformedURLException(MalformedURLException e, Object state) {
+			public void onMalformedURLException(MalformedURLException e,
+					Object state) {
 			}
-			
+
 			@Override
 			public void onIOException(IOException e, Object state) {
 			}
-			
+
 			@Override
-			public void onFileNotFoundException(FileNotFoundException e, Object state) {
+			public void onFileNotFoundException(FileNotFoundException e,
+					Object state) {
 			}
-			
+
 			@Override
 			public void onFacebookError(FacebookError e, Object state) {
 			}
-			
+
 			@Override
 			public void onComplete(String response, Object state) {
 				try {
@@ -188,13 +228,13 @@ public class AlarmsFragment extends ListFragment {
 						JSONObject from = comment.getJSONObject("from");
 						c.setFrom(from.getString("name"));
 						c.setMsg(comment.getString("message"));
-						
+
 						comments.add(c);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}					
+			}
 		});
 		return comments;
 	}
