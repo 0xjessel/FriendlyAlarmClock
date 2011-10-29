@@ -24,6 +24,9 @@ public class AlarmsFragment extends ListFragment {
 
 	ArrayList<AlarmModel> mAlarms;
 
+	public AlarmsFragment() {
+	}
+
 	public AlarmsFragment(Facebook fb) {
 		facebook = fb;
 	}

@@ -15,6 +15,9 @@ import com.facebook.android.Facebook;
 public class HistoryFragment extends ListFragment {
 	private Facebook facebook;
 
+	public HistoryFragment() {
+	}
+
 	public HistoryFragment(Facebook fb) {
 		facebook = fb;
 	}

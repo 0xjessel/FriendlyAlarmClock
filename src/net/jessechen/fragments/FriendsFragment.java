@@ -19,6 +19,9 @@ public class FriendsFragment extends ListFragment {
 
 	private Facebook facebook;
 
+	public FriendsFragment() {
+	}
+
 	public FriendsFragment(Facebook fb) {
 		facebook = fb;
 	}
