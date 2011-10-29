@@ -14,6 +14,7 @@ public class AlarmModel implements Parcelable {
 	String ringtone;
 	boolean vibrate;
 	String label;
+	int pid;
 
 	public AlarmModel() {
 
@@ -87,6 +88,14 @@ public class AlarmModel implements Parcelable {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public int getPid() {
+		return pid;
+	}
+
+	public void setPid(int pid) {
+		this.pid = pid;
 	}
 
 	public String getTimeText() {

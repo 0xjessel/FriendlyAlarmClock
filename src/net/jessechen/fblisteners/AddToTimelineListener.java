@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import net.jessechen.models.AlarmModel;
 import net.jessechen.socialalarmclock.R;
 
 import org.json.JSONException;
@@ -20,14 +21,16 @@ import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.FacebookError;
 
 public class AddToTimelineListener implements RequestListener {
+	private AlarmModel mAlarmModel;
 	private ProgressDialog dialog;
 	private Handler mHandler;
 	private Context ctx;
 
-	public AddToTimelineListener(Context c, ProgressDialog dialog) {
+	public AddToTimelineListener(AlarmModel am, Context c, ProgressDialog dialog) {
 		this.ctx = c;
 		this.dialog = dialog;
 		mHandler = new Handler();
+		mAlarmModel = am;
 	}
 
 	@Override
@@ -35,7 +38,9 @@ public class AddToTimelineListener implements RequestListener {
 		dialog.dismiss();
 		try {
 			JSONObject json = new JSONObject(response);
-			showAlertDialog("added to timeline!", json.toString(2));
+			int pid = Integer.parseInt(json.getString("id"));
+			showAlertDialog("added to timeline!", json.toString(0));
+			mAlarmModel.setPid(pid);
 		} catch (JSONException e) {
 			Log.e("SAC", "Error: " + e.toString());
 		}
