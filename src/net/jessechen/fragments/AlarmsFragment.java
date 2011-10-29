@@ -4,7 +4,7 @@ import net.jessechen.socialalarmclock.R;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +12,10 @@ import android.widget.TextView;
 
 import com.facebook.android.Facebook;
 
-public class AlarmsFragment extends Fragment {
-	private Context ctx;
+public class AlarmsFragment extends ListFragment {
 	private Facebook facebook;
-	
-	public AlarmsFragment(Context c, Facebook fb) {
-		ctx = c;
+
+	public AlarmsFragment(Facebook fb) {
 		facebook = fb;
 	}
 
@@ -29,7 +27,6 @@ public class AlarmsFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
 		View view = inflater.inflate(R.layout.alarmsfrag, container, false);
 		TextView textView = (TextView) view.findViewById(R.id.textview);
 		textView.setText("Alarms");

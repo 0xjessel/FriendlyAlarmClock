@@ -1,10 +1,13 @@
 package net.jessechen.fragments;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 import net.jessechen.socialalarmclock.R;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +15,11 @@ import android.widget.TextView;
 
 import com.facebook.android.Facebook;
 
-public class InboxFragment extends Fragment {
-	private Context ctx;
+public class FriendsFragment extends ListFragment {
+
 	private Facebook facebook;
-	
-	public InboxFragment(Context c, Facebook fb) {
-		ctx = c;
+
+	public FriendsFragment(Facebook fb) {
 		facebook = fb;
 	}
 
@@ -30,11 +32,17 @@ public class InboxFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View view = inflater.inflate(R.layout.inboxfrag, container, false);
+		View view = inflater.inflate(R.layout.friendsfrag, container, false);
 		TextView textView = (TextView) view.findViewById(R.id.textview);
-		textView.setText("Inbox");
+		textView.setText("Post");
 		textView.setTextColor(Color.WHITE);
 		textView.setTextSize(30);
 		return view;
+	}
+
+	private String getAppUsers() throws MalformedURLException, IOException {
+		Bundle params = new Bundle();
+		params.putString("method", "friends.getAppUsers");
+		return facebook.request(params);
 	}
 }
