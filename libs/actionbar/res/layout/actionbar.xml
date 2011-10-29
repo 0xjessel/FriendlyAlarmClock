@@ -35,7 +35,6 @@
             android:background="@drawable/actionbar_btn"
             android:padding="0dip"
             style="@style/ActionBarHomeLogo"
-            android:visibility="gone"
             />
         <RelativeLayout
             android:id="@+id/actionbar_home_bg"
@@ -79,7 +78,7 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/actionbar_home_bg"
+            android:layout_toRightOf="@id/actionbar_home_logo"
             android:layout_toLeftOf="@id/actionbar_actions"
             android:layout_alignWithParentIfMissing="true"
             android:layout_centerVertical="true"
@@ -101,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@id/actionbar_progress"
-                android:paddingLeft="10dip"
+                android:paddingLeft="1dip"
                 android:paddingRight="10dip"
                 android:textSize="16dip"
                 android:textStyle="bold"
