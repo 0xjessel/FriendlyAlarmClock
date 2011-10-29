@@ -86,9 +86,13 @@ public class AlarmsFragment extends ListFragment {
 		ProgressDialog dialog = ProgressDialog.show(getActivity(), "",
 				"adding to timeline..", true, true);
 
+		String alarmURL = ServerUtil.POST_ALARM_URL;
 		Bundle alarmParams = new Bundle();
 		alarmParams.putString("title", title);
 		alarmParams.putString("time", time);
+		alarmURL = alarmURL + "?" + Util.encodeUrl(alarmParams);
+		alarmParams.putString("alarm", alarmURL);
+		
 
 		mAsyncFacebookRunner.request("me/" + ServerUtil.NAMESPACE + ":"
 				+ ServerUtil.SET, alarmParams, "POST", new AddToTimelineListener(getActivity(),
