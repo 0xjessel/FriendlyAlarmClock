@@ -109,7 +109,7 @@ public class AlarmsFragment extends ListFragment {
 		String alarmURL = ServerUtil.POST_ALARM_URL;
 		Bundle alarmParams = new Bundle();
 		alarmParams.putString("title", am.getLabel());
-		alarmParams.putString("time", am.getTime());
+		alarmParams.putString("time", am.getTimeText());
 		alarmURL = alarmURL + "?" + Util.encodeUrl(alarmParams);
 		alarmParams.putString("alarm", alarmURL);
 
