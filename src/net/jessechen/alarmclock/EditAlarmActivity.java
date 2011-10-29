@@ -7,19 +7,19 @@ import net.jessechen.models.AlarmModel;
 import net.jessechen.socialalarmclock.R;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.FrameLayout.LayoutParams;
 
 public class EditAlarmActivity extends Activity implements OnTimeSetListener {
 	private static final String TAG = "EditAlarmActivity";
@@ -70,14 +70,34 @@ public class EditAlarmActivity extends Activity implements OnTimeSetListener {
 	}
 
 	public void labelClicked(View v) {
-		EditText labelEditText = new EditText(this);
-		labelEditText.setLayoutParams(new ViewGroup.LayoutParams(
-				ViewGroup.LayoutParams.FILL_PARENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT));
-		Dialog dialog = new Dialog(this);
-		dialog.setContentView(labelEditText);
-		dialog.setTitle(getResources().getString(R.string.alarm_label));
-		dialog.show();
+		final EditText labelEditText = new EditText(this);
+
+		DisplayMetrics metrics = this.getResources().getDisplayMetrics();
+		float dp = 250f;
+		int pixels = (int) (metrics.density * dp + 0.5f);
+
+		labelEditText.setWidth(pixels);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(labelEditText);
+
+		OnClickListener dialogClickListener = new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case DialogInterface.BUTTON_POSITIVE:
+					String text = labelEditText.getText().toString();
+					label.setText(text);
+					break;
+				}
+			}
+		};
+
+		builder.setPositiveButton(R.string.done, dialogClickListener);
+		builder.setNegativeButton(R.string.revert, dialogClickListener);
+
+		builder.create().show();
 	}
 
 	private void startTimePickerDialog() {
