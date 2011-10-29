@@ -40,16 +40,19 @@ public class AlarmsFragment extends ListFragment {
 
 	private ArrayList<AlarmModel> retrieveAlarms() {
 		ArrayList<AlarmModel> alarms = new ArrayList<AlarmModel>();
-		AlarmModel alarm = new AlarmModel();
-		alarm.setEnabled(true);
-		alarm.setHour(2);
-		alarm.setMinute(40);
-		alarm.setLabel("test");
 		Set<Integer> repeat = new HashSet<Integer>();
 		repeat.add(2);
 		repeat.add(5);
-		alarm.setRepeat(repeat);
-		alarms.add(alarm);
+		alarms.add(new AlarmModel(true, 0, 0, repeat, null, true, "test 0:0"));
+		alarms.add(new AlarmModel(false, 1, 10, repeat, null, true, "test 1:10"));
+		alarms.add(new AlarmModel(true, 8, 56, repeat, null, true, "test 8:56"));
+		alarms.add(new AlarmModel(true, 12, 0, repeat, null, true, "test 12:0"));
+		alarms.add(new AlarmModel(false, 12, 3, repeat, null, true, "test 12:3"));
+		alarms.add(new AlarmModel(true, 13, 30, repeat, null, true,
+				"test 13:30"));
+		alarms.add(new AlarmModel(true, 18, 59, repeat, null, true,
+				"test 18:59"));
+		alarms.add(new AlarmModel(true, 23, 59, repeat, null, true, "test 12:0"));
 		return alarms;
 	}
 

@@ -1,7 +1,6 @@
 package net.jessechen.utils;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -62,8 +61,8 @@ public class AlarmAdapter extends ArrayAdapter<AlarmModel> {
 	private static String getTimeText(int hour, int minute) {
 		if (hour < 0 || hour >= 24 || minute < 0 || minute >= 60)
 			return "Bad Input";
-		return String.format("%d:%d %s", hour > 12 ? hour - 12 : hour, minute,
-				hour > 12 ? "PM" : "AM");
+		return String.format("%d:%02d %s", hour > 12 ? hour - 12
+				: (hour == 0 ? 12 : hour), minute, hour >= 12 ? "PM" : "AM");
 	}
 
 	private static String getDaysText(Set<Integer> repeat) {

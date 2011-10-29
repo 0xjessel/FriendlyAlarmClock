@@ -5,11 +5,27 @@ import java.util.Set;
 
 public class AlarmModel {
 	boolean enabled;
-	int hour, minute; // 24-hr military style
-	Set<Integer> repeat;
+	int hour, minute; // 24-hr military style. 0 <= hour < 24, 0 <= minute < 60
+	Set<Integer> repeat; // null or a set of {1,2,...,7}
 	File ringtone;
 	boolean vibrate;
 	String label;
+
+	public AlarmModel() {
+
+	}
+
+	public AlarmModel(boolean enabled, int hour, int minute,
+			Set<Integer> repeat, File ringtone, boolean vibrate, String label) {
+		super();
+		this.enabled = enabled;
+		this.hour = hour;
+		this.minute = minute;
+		this.repeat = repeat;
+		this.ringtone = ringtone;
+		this.vibrate = vibrate;
+		this.label = label;
+	}
 
 	public boolean isEnabled() {
 		return enabled;
