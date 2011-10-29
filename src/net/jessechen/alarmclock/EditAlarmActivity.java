@@ -103,11 +103,13 @@ public class EditAlarmActivity extends Activity implements OnTimeSetListener {
 		Intent intent = new Intent();
 		intent.putExtra("alarm", mAlarm);
 		setResult(RESULT_OK, intent);
+		finish();
 	}
 
 	public void cancelClicked(View v) {
 		Intent intent = new Intent();
 		intent.putExtra("alarm", mAlarm);
 		setResult(RESULT_CANCELED, intent);
+		finish();
 	}
 }

@@ -11,4 +11,5 @@
     <string name="alarm_time">Time</string>
     <string name="done">Save</string>
     <string name="revert">Cancel</string>
+    <string name="ok">OK</string>
 </resources>

@@ -5,9 +5,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.jessechen.alarmclock.EditAlarmActivity;
+import net.jessechen.fblisteners.AddToTimelineListener;
 import net.jessechen.models.AlarmModel;
 import net.jessechen.socialalarmclock.R;
 import net.jessechen.utils.AlarmAdapter;
+import net.jessechen.utils.ServerUtil;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -20,19 +23,22 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 
+import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
+import com.facebook.android.Util;
 
 public class AlarmsFragment extends ListFragment {
 	public static final String TAG = "AlarmsFragment";
 	private Facebook facebook;
-
+	private AsyncFacebookRunner mAsyncFacebookRunner;
 	ArrayList<AlarmModel> mAlarms;
 
 	public AlarmsFragment() {
 	}
 
-	public AlarmsFragment(Facebook fb) {
+	public AlarmsFragment(Facebook fb, AsyncFacebookRunner mAsyncRunner) {
 		facebook = fb;
+		mAsyncFacebookRunner = mAsyncRunner;
 	}
 
 	@Override
@@ -95,4 +101,21 @@ public class AlarmsFragment extends ListFragment {
 		intent.putExtra("alarm", alarm);
 		startActivityForResult(intent, 0);
 	}
+
+	private void addToTimeline(String title, String time) {
+		ProgressDialog dialog = ProgressDialog.show(getActivity(), "",
+				"adding to timeline..", true, true);
+
+		String alarmURL = ServerUtil.POST_ALARM_URL;
+		Bundle alarmParams = new Bundle();
+		alarmParams.putString("title", title);
+		alarmParams.putString("time", time);
+		alarmURL = alarmURL + "?" + Util.encodeUrl(alarmParams);
+		alarmParams.putString("alarm", alarmURL);
+
+		mAsyncFacebookRunner.request("me/" + ServerUtil.NAMESPACE + ":"
+				+ ServerUtil.SET, alarmParams, "POST",
+				new AddToTimelineListener(getActivity(), dialog), null);
+	}
+
 }
