@@ -32,7 +32,7 @@ public class FriendsFragment extends ListFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View view = inflater.inflate(R.layout.friendsfrag, container, false);
+		View view = inflater.inflate(R.layout.friends_frag, container, false);
 		TextView textView = (TextView) view.findViewById(R.id.textview);
 		textView.setText("Post");
 		textView.setTextColor(Color.WHITE);

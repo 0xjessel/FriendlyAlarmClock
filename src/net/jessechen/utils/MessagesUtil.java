@@ -1,10 +1,12 @@
-package net.jessechen.messages;
+package net.jessechen.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
+
+import net.jessechen.models.MessageModel;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -63,7 +65,7 @@ public class MessagesUtil {
 		}
 	}
 
-	public static LinkedList<Message> read(int uid) {
+	public static LinkedList<MessageModel> read(int uid) {
 		String result = "";
 		// the data to send
 		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -94,12 +96,12 @@ public class MessagesUtil {
 		}
 
 		// parse json data
-		LinkedList<Message> messages = new LinkedList<Message>();
+		LinkedList<MessageModel> messages = new LinkedList<MessageModel>();
 		try {
 			JSONArray jArray = new JSONArray(result);
 			for (int i = 0; i < jArray.length(); i++) {
 				JSONObject json_data = jArray.getJSONObject(i);
-				messages.add(new Message(
+				messages.add(new MessageModel(
 						json_data.getInt("id"), 
 						json_data.getString("cur_timestamp"), 
 						json_data.getInt("fromMsg"),

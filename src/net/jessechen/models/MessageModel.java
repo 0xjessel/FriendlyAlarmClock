@@ -1,13 +1,13 @@
-package net.jessechen.messages;
+package net.jessechen.models;
 
-public class Message {
+public class MessageModel {
 	private int id;
 	private String timestamp;
 	private int fromMsg;
 	private int toMsg;
 	private String msg;
 	
-	public Message(int id, String timestamp, int fromMsg, int toMsg, String msg) {
+	public MessageModel(int id, String timestamp, int fromMsg, int toMsg, String msg) {
 		this.setId(id);
 		this.setTimestamp(timestamp);
 		this.setFromMsg(fromMsg);

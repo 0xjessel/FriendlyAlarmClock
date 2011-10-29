@@ -28,7 +28,7 @@ public class HistoryFragment extends ListFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View view = inflater.inflate(R.layout.historyfrag, container, false);
+		View view = inflater.inflate(R.layout.history_frag, container, false);
 		TextView textView = (TextView) view.findViewById(R.id.textview);
 		textView.setText("Inbox");
 		textView.setTextColor(Color.WHITE);
