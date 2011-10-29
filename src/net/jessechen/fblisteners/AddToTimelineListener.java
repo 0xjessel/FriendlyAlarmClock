@@ -38,7 +38,7 @@ public class AddToTimelineListener implements RequestListener {
 		dialog.dismiss();
 		try {
 			JSONObject json = new JSONObject(response);
-			int pid = Integer.parseInt(json.getString("id"));
+			long pid = Long.parseLong(json.getString("id"));
 			showAlertDialog("added to timeline!", json.toString(0));
 			mAlarmModel.setPid(pid);
 		} catch (JSONException e) {

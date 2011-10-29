@@ -14,7 +14,7 @@ public class AlarmModel implements Parcelable {
 	String ringtone;
 	boolean vibrate;
 	String label;
-	int pid;
+	long pid;
 
 	public AlarmModel() {
 
@@ -90,11 +90,11 @@ public class AlarmModel implements Parcelable {
 		this.label = label;
 	}
 
-	public int getPid() {
+	public long getPid() {
 		return pid;
 	}
 
-	public void setPid(int pid) {
+	public void setPid(long pid) {
 		this.pid = pid;
 	}
 

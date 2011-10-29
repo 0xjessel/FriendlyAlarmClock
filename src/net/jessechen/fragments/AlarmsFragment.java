@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 
@@ -29,6 +30,7 @@ import com.facebook.android.Util;
 
 public class AlarmsFragment extends ListFragment {
 	public static final String TAG = "AlarmsFragment";
+	private static final int EDIT_ALARM_REQUEST = 0;
 	private Facebook facebook;
 	private AsyncFacebookRunner mAsyncFacebookRunner;
 	ArrayList<AlarmModel> mAlarms;
@@ -99,7 +101,30 @@ public class AlarmsFragment extends ListFragment {
 			alarm = mAlarms.get(position);
 		Intent intent = new Intent(getActivity(), EditAlarmActivity.class);
 		intent.putExtra("alarm", alarm);
-		startActivityForResult(intent, 0);
+		intent.putExtra("position", position);
+		startActivityForResult(intent, EDIT_ALARM_REQUEST);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case EDIT_ALARM_REQUEST:
+			if (data != null) {
+				Bundle bundle = data.getExtras();
+				AlarmModel alarm = bundle.getParcelable("alarm");
+				int position = bundle.getInt("position");
+				if (position >= 0)
+					mAlarms.remove(position);
+				mAlarms.add(alarm);
+				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
+
+				addToTimeline(alarm);
+			}
+			break;
+		default:
+			super.onActivityResult(requestCode, resultCode, data);
+			break;
+		}
 	}
 
 	private void addToTimeline(AlarmModel am) {

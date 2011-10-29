@@ -24,6 +24,7 @@ import android.widget.TimePicker;
 public class EditAlarmActivity extends Activity implements OnTimeSetListener {
 	private static final String TAG = "EditAlarmActivity";
 	AlarmModel mAlarm;
+	int mPosition;
 
 	CheckBox enabled;
 	TextView time;
@@ -37,7 +38,10 @@ public class EditAlarmActivity extends Activity implements OnTimeSetListener {
 
 		setContentView(R.layout.alarm_edit);
 
-		mAlarm = getIntent().getParcelableExtra("alarm");
+		Bundle bundle = getIntent().getExtras();
+
+		mAlarm = bundle.getParcelable("alarm");
+		mPosition = bundle.getInt("position");
 
 		boolean newAlarm = mAlarm == null;
 		if (newAlarm) {
@@ -122,14 +126,13 @@ public class EditAlarmActivity extends Activity implements OnTimeSetListener {
 
 		Intent intent = new Intent();
 		intent.putExtra("alarm", mAlarm);
+		intent.putExtra("position", mPosition);
 		setResult(RESULT_OK, intent);
 		finish();
 	}
 
 	public void cancelClicked(View v) {
-		Intent intent = new Intent();
-		intent.putExtra("alarm", mAlarm);
-		setResult(RESULT_CANCELED, intent);
+		setResult(RESULT_CANCELED);
 		finish();
 	}
 }
