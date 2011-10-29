@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Social Alarm Clock</string>
+    <string name="app_name">Friendly Alarm</string>
     <string name="signout">Sign out</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>

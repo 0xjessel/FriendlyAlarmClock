@@ -1,15 +1,25 @@
 package net.jessechen.fragments;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import net.jessechen.alarmclock.EditAlarmActivity;
 import net.jessechen.fblisteners.AddToTimelineListener;
 import net.jessechen.models.AlarmModel;
+import net.jessechen.models.CommentModel;
 import net.jessechen.socialalarmclock.R;
 import net.jessechen.utils.AlarmAdapter;
 import net.jessechen.utils.ServerUtil;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +34,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 
 import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.Facebook;
+import com.facebook.android.FacebookError;
 import com.facebook.android.Util;
 
 public class AlarmsFragment extends ListFragment {
@@ -118,4 +130,47 @@ public class AlarmsFragment extends ListFragment {
 				new AddToTimelineListener(am, getActivity(), dialog), null);
 	}
 
+	private LinkedList<CommentModel> readFromPost(AlarmModel am) {
+		String pid = Integer.toString(am.getPid());
+		final LinkedList<CommentModel> comments = new LinkedList<CommentModel>();
+		mAsyncFacebookRunner.request(pid + "/comments", new RequestListener() {
+			
+			@Override
+			public void onMalformedURLException(MalformedURLException e, Object state) {
+			}
+			
+			@Override
+			public void onIOException(IOException e, Object state) {
+			}
+			
+			@Override
+			public void onFileNotFoundException(FileNotFoundException e, Object state) {
+			}
+			
+			@Override
+			public void onFacebookError(FacebookError e, Object state) {
+			}
+			
+			@Override
+			public void onComplete(String response, Object state) {
+				try {
+					JSONObject obj = new JSONObject(response);
+					JSONArray commentsArray = obj.getJSONArray("data");
+					for (int i = 0; i < commentsArray.length(); i++) {
+						JSONObject comment = commentsArray.getJSONObject(i);
+						CommentModel c = new CommentModel();
+						c.setCommentID(comment.getString("id"));
+						JSONObject from = comment.getJSONObject("from");
+						c.setFrom(from.getString("name"));
+						c.setMsg(comment.getString("message"));
+						
+						comments.add(c);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}					
+		});
+		return comments;
+	}
 }
