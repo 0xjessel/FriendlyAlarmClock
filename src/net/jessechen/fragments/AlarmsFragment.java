@@ -48,7 +48,7 @@ public class AlarmsFragment extends ListFragment {
 	public static final String TAG = "AlarmsFragment";
 	private static final int EDIT_ALARM_REQUEST = 0;
 	private Facebook facebook;
-	private AsyncFacebookRunner mAsyncFacebookRunner;
+	private static AsyncFacebookRunner mAsyncFacebookRunner;
 	ArrayList<AlarmModel> mAlarms;
 
 	public AlarmsFragment() {
@@ -150,8 +150,8 @@ public class AlarmsFragment extends ListFragment {
 		// now.getDay(),
 		// alarm.getHour(), alarm.getMinute());
 		Calendar cal = Calendar.getInstance();
-//		cal.set(cal.HOUR_OF_DAY, alarm.getHour());
-//		cal.set(cal.MINUTE, alarm.getMinute());
+		// cal.set(cal.HOUR_OF_DAY, alarm.getHour());
+		// cal.set(cal.MINUTE, alarm.getMinute());
 		// cal.set(now.getYear(), now.getMonth(), now.getDay(), alarm.getHour(),
 		// alarm.getMinute());
 
@@ -163,7 +163,7 @@ public class AlarmsFragment extends ListFragment {
 
 		Intent intent = new Intent(getActivity(), AlarmReceiver.class);
 		intent.putExtra("alarm_message", String.valueOf(alarm.getPid()));
-//		intent.setAction("alarm_message");
+		// intent.setAction("alarm_message");
 		// In reality, you would want to have a static variable for the request
 		// code instead of 192837
 		PendingIntent sender = PendingIntent.getBroadcast(getActivity(),
@@ -174,7 +174,7 @@ public class AlarmsFragment extends ListFragment {
 		AlarmManager am = (AlarmManager) getActivity().getSystemService(
 				Context.ALARM_SERVICE);
 		// am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
-		am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() + 3000, sender);
+		am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() + 30000, sender);
 	}
 
 	private void addToTimeline(AlarmModel am) {
@@ -193,8 +193,7 @@ public class AlarmsFragment extends ListFragment {
 				new AddToTimelineListener(am, getActivity(), dialog), null);
 	}
 
-	private LinkedList<CommentModel> readFromPost(AlarmModel am) {
-		String pid = Long.toString(am.getPid());
+	public static LinkedList<CommentModel> readFromPost(String pid) {
 		final LinkedList<CommentModel> comments = new LinkedList<CommentModel>();
 		mAsyncFacebookRunner.request(pid + "/comments", new RequestListener() {
 
