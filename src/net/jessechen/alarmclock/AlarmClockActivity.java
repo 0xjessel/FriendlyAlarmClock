@@ -59,7 +59,7 @@ public class AlarmClockActivity extends FragmentActivity {
 
 		ctx = this;
 
-		mAdapter = new MyFragmentPagerAdapter(ctx, facebook, mAsyncRunner, 
+		mAdapter = new MyFragmentPagerAdapter(ctx, facebook, mAsyncRunner,
 				getSupportFragmentManager());
 		mViewPager = (ViewPager) findViewById(R.id.viewpager);
 		mViewPager.setAdapter(mAdapter);
@@ -121,7 +121,6 @@ public class AlarmClockActivity extends FragmentActivity {
 		try {
 			return openFileInput(FILENAME);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -142,7 +141,6 @@ public class AlarmClockActivity extends FragmentActivity {
 			editor.putString("name", obj.optString("name", "John Doe")); // get
 																			// name
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
