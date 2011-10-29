@@ -1,8 +1,6 @@
 package net.jessechen.utils;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import net.jessechen.models.AlarmModel;
 import net.jessechen.socialalarmclock.R;
@@ -50,60 +48,10 @@ public class AlarmAdapter extends ArrayAdapter<AlarmModel> {
 		AlarmModel alarm = mAlarms.get(position);
 		if (alarm != null) {
 			mHolder.enabled.setChecked(alarm.isEnabled());
-			mHolder.timeDisplay.setText(getTimeText(alarm.getHour(),
-					alarm.getMinute()));
-			mHolder.daysOfWeek.setText(getDaysText(alarm.getRepeat()));
-			mHolder.label.setText(alarm.getLabel());
+			mHolder.timeDisplay.setText(alarm.getTimeText());
+			mHolder.daysOfWeek.setText(alarm.getDaysText());
 		}
 		return convertView;
-	}
-
-	private static String getTimeText(int hour, int minute) {
-		if (hour < 0 || hour >= 24 || minute < 0 || minute >= 60)
-			return "Bad Input";
-		return String.format("%d:%02d %s", hour > 12 ? hour - 12
-				: (hour == 0 ? 12 : hour), minute, hour >= 12 ? "PM" : "AM");
-	}
-
-	private static String getDaysText(Set<Integer> repeat) {
-		if (repeat == null)
-			return "";
-		Integer[] days = new Integer[repeat.size()];
-		days = repeat.toArray(days);
-		Arrays.sort(days);
-
-		String ret = "";
-		for (int day : days) {
-			if (!ret.equals(""))
-				ret += ", ";
-			switch (day) {
-			case 1:
-				ret += "Mo";
-				break;
-			case 2:
-				ret += "Tu";
-				break;
-			case 3:
-				ret += "We";
-				break;
-			case 4:
-				ret += "Th";
-				break;
-			case 5:
-				ret += "Fr";
-				break;
-			case 6:
-				ret += "Sa";
-				break;
-			case 7:
-				ret += "Su";
-				break;
-			default:
-				ret += "?";
-				break;
-			}
-		}
-		return ret;
 	}
 
 	static class ViewHolder {

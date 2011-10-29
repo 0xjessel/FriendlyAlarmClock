@@ -16,6 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="net.jessechen.alarmclock.EditAlarmActivity" android:label="@string/edit_alarm_name"></activity>
 
     </application>
 </manifest>
