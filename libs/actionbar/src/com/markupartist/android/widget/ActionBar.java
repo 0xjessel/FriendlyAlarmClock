@@ -16,12 +16,14 @@
 
 package com.markupartist.android.widget;
 
+import java.io.InputStream;
 import java.util.LinkedList;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,9 +97,9 @@ public class ActionBar extends RelativeLayout implements OnClickListener {
      * 
      * @param resId The drawable resource id
      */
-    public void setHomeLogo(int resId) {
+    public void setHomeLogo(InputStream is) {
         // TODO: Add possibility to add an IntentAction as well.
-        mLogoView.setImageResource(resId);
+        mLogoView.setImageDrawable(Drawable.createFromStream(is, "src"));
         mLogoView.setVisibility(View.VISIBLE);
         mHomeLayout.setVisibility(View.GONE);
     }

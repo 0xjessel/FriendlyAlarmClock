@@ -1,12 +1,23 @@
 package net.jessechen.alarmclock;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
 import net.jessechen.fblisteners.AppRequestsListener;
 import net.jessechen.fblisteners.LogoutListener;
 import net.jessechen.secret.Secret;
 import net.jessechen.socialalarmclock.R;
+
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -19,12 +30,14 @@ import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
+import com.markupartist.android.widget.ActionBar;
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class AlarmClockActivity extends FragmentActivity {
 
 	private Context ctx;
 	private SharedPreferences mPrefs;
+	private final String FILENAME = "profile_pic";
 	private Facebook facebook = new Facebook(Secret.getAppId());
 	private AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(facebook);
 
@@ -38,6 +51,10 @@ public class AlarmClockActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		ActionBar actionBar = (ActionBar) findViewById(R.id.actionbar);
+		InputStream is = getProfilePicture(); 
+		actionBar.setHomeLogo(is);
+		
 		ctx = this;
 
 		mAdapter = new MyFragmentPagerAdapter(ctx, facebook,
@@ -73,12 +90,13 @@ public class AlarmClockActivity extends FragmentActivity {
 					editor.putString("access_token", facebook.getAccessToken());
 					editor.putLong("access_expires",
 							facebook.getAccessExpires());
+					getUserInfo(editor);
 					editor.commit();
-
+					
 					downloadProfilePic();
+
+
 					sendAppRequests();
-					
-					
 				}
 
 				@Override
@@ -96,6 +114,16 @@ public class AlarmClockActivity extends FragmentActivity {
 		}
 	}
 
+	private InputStream getProfilePicture() {
+		try {
+			return openFileInput(FILENAME);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -103,11 +131,57 @@ public class AlarmClockActivity extends FragmentActivity {
 		facebook.authorizeCallback(requestCode, resultCode, data);
 	}
 
-	private void downloadProfilePic() {
-		String FILENAME = "profile_pic";
+	private void getUserInfo(Editor editor) {
+		try {
+			String jsonUser = facebook.request("me");
+			JSONObject obj = new JSONObject(jsonUser);
+			editor.putString("uid", obj.optString("id", "-1")); // get userid
+			editor.putString("name", obj.optString("name", "John Doe")); // get name
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
+	private void downloadProfilePic() {
+		final String BASE_URL = "https://graph.facebook.com/";
+		String uid = mPrefs.getString("uid", "-1");
+		InputStream is = null;
+		
+		try {
+			if (!uid.equals("-1")) {
+				is = new URL(BASE_URL + uid + "/picture?type=large").openStream();
+				byte[] pic = readBytes(is);
+				FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+				fos.write(pic);
+				fos.close();
+			} else {
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public byte[] readBytes(InputStream inputStream) throws IOException {
+		  // this dynamically extends to take the bytes you read
+		  ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+		  
+		  // this is storage overwritten on each iteration with bytes
+		  int bufferSize = 1024;
+		  byte[] buffer = new byte[bufferSize];
+
+		  // we need to know how may bytes were read to write them to the byteBuffer
+		  int len = 0;
+		  while ((len = inputStream.read(buffer)) != -1) {
+		    byteBuffer.write(buffer, 0, len);
+		  }
+
+		  // and then we can return your byte array.
+		  return byteBuffer.toByteArray();
+	}
+
 	private void sendAppRequests() {
 		Bundle params = new Bundle();
 		params.putString("message", "check me out");
