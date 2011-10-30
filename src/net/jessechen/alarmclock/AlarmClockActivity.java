@@ -11,6 +11,7 @@ import net.jessechen.fblisteners.AppRequestsListener;
 import net.jessechen.fblisteners.LogoutListener;
 import net.jessechen.secret.Secret;
 import net.jessechen.socialalarmclock.R;
+import net.jessechen.utils.ServerUtil;
 
 import org.json.JSONObject;
 
@@ -21,6 +22,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -38,6 +40,7 @@ public class AlarmClockActivity extends FragmentActivity {
 	private Context ctx;
 	private SharedPreferences mPrefs;
 	private final String FILENAME = "profile_pic";
+	
 	private Facebook facebook = new Facebook(Secret.getAppId());
 	private AsyncFacebookRunner mAsyncRunner = new AsyncFacebookRunner(facebook);
 
@@ -117,15 +120,6 @@ public class AlarmClockActivity extends FragmentActivity {
 		}
 	}
 
-	private InputStream getProfilePicture() {
-		try {
-			return openFileInput(FILENAME);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -138,22 +132,19 @@ public class AlarmClockActivity extends FragmentActivity {
 			String jsonUser = facebook.request("me");
 			JSONObject obj = new JSONObject(jsonUser);
 			editor.putString("uid", obj.optString("id", "-1")); // get userid
-			editor.putString("name", obj.optString("name", "John Doe")); // get
-																			// name
+			editor.putString("name", obj.optString("name", "derp")); // get
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	private void downloadProfilePic() {
-		final String BASE_URL = "https://graph.facebook.com/";
 		String uid = mPrefs.getString("uid", "-1");
 		InputStream is = null;
 
 		try {
 			if (!uid.equals("-1")) {
-				is = new URL(BASE_URL + uid + "/picture?type=large")
+				is = new URL(ServerUtil.FB_GRAPH_URL + uid + "/picture?type=large")
 						.openStream();
 				byte[] pic = readBytes(is);
 				FileOutputStream fos = openFileOutput(FILENAME,
@@ -161,13 +152,28 @@ public class AlarmClockActivity extends FragmentActivity {
 				fos.write(pic);
 				fos.close();
 			} else {
-
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	private InputStream getProfilePicture() {
+		try {
+			return openFileInput(FILENAME);
+		} catch (FileNotFoundException e) {
+			Log.e("SAC", "no profile picture yet");
+		}
+		return null;
+	}
 
+	private void sendAppRequests() {
+		Bundle params = new Bundle();
+		params.putString("message", "check me out");
+		params.putString("title", "Send an app request");
+		facebook.dialog(ctx, "apprequests", params, new AppRequestsListener());
+	}
+	
 	public byte[] readBytes(InputStream inputStream) throws IOException {
 		// this dynamically extends to take the bytes you read
 		ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
@@ -185,13 +191,6 @@ public class AlarmClockActivity extends FragmentActivity {
 
 		// and then we can return your byte array.
 		return byteBuffer.toByteArray();
-	}
-
-	private void sendAppRequests() {
-		Bundle params = new Bundle();
-		params.putString("message", "check me out");
-		params.putString("title", "Send an app request");
-		facebook.dialog(ctx, "apprequests", params, new AppRequestsListener());
 	}
 
 	@Override

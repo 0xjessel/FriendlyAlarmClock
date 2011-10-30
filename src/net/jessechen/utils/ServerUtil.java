@@ -1,118 +1,95 @@
 package net.jessechen.utils;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.LinkedList;
 
-import net.jessechen.models.MessageModel;
+import net.jessechen.fblisteners.AddToTimelineListener;
+import net.jessechen.models.AlarmModel;
+import net.jessechen.models.CommentModel;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.Bundle;
+
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.AsyncFacebookRunner.RequestListener;
+import com.facebook.android.FacebookError;
+import com.facebook.android.Util;
 
 public class ServerUtil {
 
 	public static final String FB_GRAPH_URL = "https://graph.facebook.com";
 	public static final String BASE_URL = "http://www.socialalarmclock.jessechen.net";
-	public static final String POST_ALARM_URL = BASE_URL + "/opengraph/alarm.php";
-	public static final String NAMESPACE = "socialalarmclock";
+	public static final String POST_ALARM_URL = BASE_URL
+			+ "/opengraph/alarm.php";
+	public static final String NAMESPACE = "friendlyalarmclock";
 	public static final String SET = "set";
 
-	public static boolean post(int from, int to, String msg) {
-		String result = "";
-		// the data to send
-		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("from", Integer
-				.toString(from)));
-		nameValuePairs.add(new BasicNameValuePair("to", Integer.toString(to)));
-		nameValuePairs.add(new BasicNameValuePair("msg", msg));
+	public static void addToTimeline(Context c,
+			AsyncFacebookRunner mAsyncFacebookRunner, AlarmModel am) {
+		ProgressDialog dialog = ProgressDialog.show(c, "",
+				"adding to timeline..", true, true);
 
-		// http post
-		try {
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost(POST_ALARM_URL);
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+		String alarmURL = ServerUtil.POST_ALARM_URL;
+		Bundle alarmParams = new Bundle();
+		alarmParams.putString("title", am.getLabel());
+		alarmParams.putString("time", am.getTimeText());
+		alarmURL = alarmURL + "?" + Util.encodeUrl(alarmParams);
+		alarmParams.putString("alarm", alarmURL);
 
-			HttpResponse response = httpclient.execute(httppost);
-
-			InputStream is = response.getEntity().getContent();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					is, "iso-8859-1"), 8);
-			StringBuilder sb = new StringBuilder();
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-			}
-			is.close();
-
-			result = sb.toString();
-		} catch (Exception e) {
-			Log.e("SAC", "Error posting message: " + e.toString());
-		}
-		if (result.equals("1")) {
-			return true;
-		} else {
-			return false;
-		}
+		mAsyncFacebookRunner.request("me/" + ServerUtil.NAMESPACE + ":"
+				+ ServerUtil.SET, alarmParams, "POST",
+				new AddToTimelineListener(am, c, dialog), null);
 	}
 
-	public static LinkedList<MessageModel> read(int uid) {
-		String result = "";
-		// the data to send
-		ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs
-				.add(new BasicNameValuePair("uid", Integer.toString(uid)));
+	public static LinkedList<CommentModel> readFromPost(
+			AsyncFacebookRunner mAsyncFacebookRunner, String pid) {
+		final LinkedList<CommentModel> comments = new LinkedList<CommentModel>();
+		mAsyncFacebookRunner.request(pid + "/comments", new RequestListener() {
 
-		// http post
-		try {
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost(POST_ALARM_URL);
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-			HttpResponse response = httpclient.execute(httppost);
-
-			InputStream is = response.getEntity().getContent();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					is, "iso-8859-1"), 8);
-			StringBuilder sb = new StringBuilder();
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line);
+			@Override
+			public void onMalformedURLException(MalformedURLException e,
+					Object state) {
 			}
-			is.close();
 
-			result = sb.toString();
-		} catch (Exception e) {
-			Log.e("SAC", "Error posting message: " + e.toString());
-		}
-
-		// parse json data
-		LinkedList<MessageModel> messages = new LinkedList<MessageModel>();
-		try {
-			JSONArray jArray = new JSONArray(result);
-			for (int i = 0; i < jArray.length(); i++) {
-				JSONObject json_data = jArray.getJSONObject(i);
-				messages.add(new MessageModel(
-						json_data.getInt("id"), 
-						json_data.getString("cur_timestamp"), 
-						json_data.getInt("fromMsg"),
-						json_data.getInt("toMsg"), 
-						json_data.getString("msg")));
+			@Override
+			public void onIOException(IOException e, Object state) {
 			}
-		} catch (JSONException e) {
-			Log.e("SAC", "Error parsing data: " + e.toString());
-		}
-		return messages;
+
+			@Override
+			public void onFileNotFoundException(FileNotFoundException e,
+					Object state) {
+			}
+
+			@Override
+			public void onFacebookError(FacebookError e, Object state) {
+			}
+
+			@Override
+			public void onComplete(String response, Object state) {
+				try {
+					JSONObject obj = new JSONObject(response);
+					JSONArray commentsArray = obj.getJSONArray("data");
+					for (int i = 0; i < commentsArray.length(); i++) {
+						JSONObject comment = commentsArray.getJSONObject(i);
+						CommentModel c = new CommentModel();
+						c.setCommentID(comment.getString("id"));
+						JSONObject from = comment.getJSONObject("from");
+						c.setFrom(from.getString("name"));
+						c.setMsg(comment.getString("message"));
+
+						comments.add(c);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		return comments;
 	}
 }

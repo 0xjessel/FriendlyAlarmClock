@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import net.jessechen.socialalarmclock.R;
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;

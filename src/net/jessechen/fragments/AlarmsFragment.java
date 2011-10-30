@@ -1,29 +1,18 @@
 package net.jessechen.fragments;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 import net.jessechen.alarmclock.AlarmReceiver;
 import net.jessechen.alarmclock.EditAlarmActivity;
-import net.jessechen.fblisteners.AddToTimelineListener;
 import net.jessechen.models.AlarmModel;
-import net.jessechen.models.CommentModel;
 import net.jessechen.socialalarmclock.R;
 import net.jessechen.utils.AlarmAdapter;
 import net.jessechen.utils.ServerUtil;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,10 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.Facebook;
-import com.facebook.android.FacebookError;
-import com.facebook.android.Util;
 
 public class AlarmsFragment extends ListFragment {
 	public static final String TAG = "AlarmsFragment";
@@ -134,7 +120,7 @@ public class AlarmsFragment extends ListFragment {
 				mAlarms.add(alarm);
 				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
 
-				addToTimeline(alarm);
+				ServerUtil.addToTimeline(getActivity(), mAsyncFacebookRunner, alarm);
 				addToAlarmManager(alarm);
 			}
 			break;
@@ -175,66 +161,5 @@ public class AlarmsFragment extends ListFragment {
 				Context.ALARM_SERVICE);
 		// am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
 		am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() + 30000, sender);
-	}
-
-	private void addToTimeline(AlarmModel am) {
-		ProgressDialog dialog = ProgressDialog.show(getActivity(), "",
-				"adding to timeline..", true, true);
-
-		String alarmURL = ServerUtil.POST_ALARM_URL;
-		Bundle alarmParams = new Bundle();
-		alarmParams.putString("title", am.getLabel());
-		alarmParams.putString("time", am.getTimeText());
-		alarmURL = alarmURL + "?" + Util.encodeUrl(alarmParams);
-		alarmParams.putString("alarm", alarmURL);
-
-		mAsyncFacebookRunner.request("me/" + ServerUtil.NAMESPACE + ":"
-				+ ServerUtil.SET, alarmParams, "POST",
-				new AddToTimelineListener(am, getActivity(), dialog), null);
-	}
-
-	public static LinkedList<CommentModel> readFromPost(String pid) {
-		final LinkedList<CommentModel> comments = new LinkedList<CommentModel>();
-		mAsyncFacebookRunner.request(pid + "/comments", new RequestListener() {
-
-			@Override
-			public void onMalformedURLException(MalformedURLException e,
-					Object state) {
-			}
-
-			@Override
-			public void onIOException(IOException e, Object state) {
-			}
-
-			@Override
-			public void onFileNotFoundException(FileNotFoundException e,
-					Object state) {
-			}
-
-			@Override
-			public void onFacebookError(FacebookError e, Object state) {
-			}
-
-			@Override
-			public void onComplete(String response, Object state) {
-				try {
-					JSONObject obj = new JSONObject(response);
-					JSONArray commentsArray = obj.getJSONArray("data");
-					for (int i = 0; i < commentsArray.length(); i++) {
-						JSONObject comment = commentsArray.getJSONObject(i);
-						CommentModel c = new CommentModel();
-						c.setCommentID(comment.getString("id"));
-						JSONObject from = comment.getJSONObject("from");
-						c.setFrom(from.getString("name"));
-						c.setMsg(comment.getString("message"));
-
-						comments.add(c);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		return comments;
 	}
 }
