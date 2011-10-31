@@ -48,6 +48,8 @@ public class AlarmClockActivity extends FragmentActivity {
 	private MyFragmentPagerAdapter mAdapter;
 	private TitlePageIndicator mIndicator;
 
+	public static final String TAG = "FAC";
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -162,7 +164,7 @@ public class AlarmClockActivity extends FragmentActivity {
 		try {
 			return openFileInput(FILENAME);
 		} catch (FileNotFoundException e) {
-			Log.e("SAC", "no profile picture yet");
+			Log.e(TAG, "no profile picture yet");
 		}
 		return null;
 	}

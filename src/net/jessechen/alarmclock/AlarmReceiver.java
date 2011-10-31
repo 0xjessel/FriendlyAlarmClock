@@ -17,7 +17,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-		Toast.makeText(context, "don't forget class at 3!", Toast.LENGTH_LONG)
+		Toast.makeText(context, "alarm!", Toast.LENGTH_LONG)
 				.show();
 
 		try {
@@ -44,6 +44,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 				mMediaPlayer.setLooping(true);
 				mMediaPlayer.prepare();
 				mMediaPlayer.start();
+				this.wait(2000);
+				mMediaPlayer.stop();
 			}
 		} catch (Exception ex) {
 

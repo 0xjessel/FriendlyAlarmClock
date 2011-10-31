@@ -2,8 +2,10 @@ package net.jessechen.fragments;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import net.jessechen.alarmclock.AlarmReceiver;
 import net.jessechen.alarmclock.EditAlarmActivity;
@@ -26,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
@@ -120,7 +123,8 @@ public class AlarmsFragment extends ListFragment {
 				mAlarms.add(alarm);
 				((ArrayAdapter<?>) getListAdapter()).notifyDataSetChanged();
 
-				ServerUtil.addToTimeline(getActivity(), mAsyncFacebookRunner, alarm);
+				ServerUtil.addToTimeline(getActivity(), mAsyncFacebookRunner,
+						alarm);
 				addToAlarmManager(alarm);
 			}
 			break;
@@ -131,27 +135,19 @@ public class AlarmsFragment extends ListFragment {
 	}
 
 	private void addToAlarmManager(AlarmModel alarm) {
-		// Date now = new Date();
-		// Date alarmDate = new Date(now.getYear(), now.getMonth(),
-		// now.getDay(),
-		// alarm.getHour(), alarm.getMinute());
+		Calendar cur = Calendar.getInstance();
+		
 		Calendar cal = Calendar.getInstance();
-		// cal.set(cal.HOUR_OF_DAY, alarm.getHour());
-		// cal.set(cal.MINUTE, alarm.getMinute());
-		// cal.set(now.getYear(), now.getMonth(), now.getDay(), alarm.getHour(),
-		// alarm.getMinute());
+		cal.set(Calendar.HOUR_OF_DAY, alarm.getHour());
+		cal.set(Calendar.MINUTE, alarm.getMinute());
 
-		// if (now.after(alarmDate)) {
-		// // get a Calendar object with current time
-		// // add 5 minutes to the calendar object
-		// cal.roll(Calendar.DAY_OF_YEAR, true);
-		// }
+		if (cal.before(cur)) {
+			cal.roll(Calendar.DAY_OF_YEAR, true);
+		}
 
 		Intent intent = new Intent(getActivity(), AlarmReceiver.class);
-		intent.putExtra("alarm_message", String.valueOf(alarm.getPid()));
-		// intent.setAction("alarm_message");
-		// In reality, you would want to have a static variable for the request
-		// code instead of 192837
+		intent.putExtra("assoc_pid", String.valueOf(alarm.getPid()));
+
 		PendingIntent sender = PendingIntent.getBroadcast(getActivity(),
 				AlarmReceiver.REQUEST_CODE, intent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
@@ -159,7 +155,14 @@ public class AlarmsFragment extends ListFragment {
 		// Get the AlarmManager service
 		AlarmManager am = (AlarmManager) getActivity().getSystemService(
 				Context.ALARM_SERVICE);
-		// am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
-		am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis() + 30000, sender);
+		am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), sender);
+
+		long diff = cal.getTimeInMillis() - cur.getTimeInMillis();
+		int hours = (int) ((diff / (1000 * 60 * 60)) % 24);
+		int minutes = (int) ((diff / (1000 * 60)) % 60);
+		
+		Toast.makeText(getActivity(),
+				String.format("This alarm is set for %d hours and %d minutes from now.", hours, minutes),
+				Toast.LENGTH_LONG).show();
 	}
 }

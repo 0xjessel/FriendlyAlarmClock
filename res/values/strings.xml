@@ -8,6 +8,7 @@
     <string name="edit_alarm_name">Edit alarm</string>
     <string name="alarm_enable">Turn alarm on</string>
     <string name="alarm_label">Label</string>
+    <string name="alarm_label_default">Alarm</string>
     <string name="alarm_time">Time</string>
     <string name="done">Save</string>
     <string name="revert">Cancel</string>

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import net.jessechen.alarmclock.AlarmClockActivity;
 import net.jessechen.models.AlarmModel;
 import net.jessechen.socialalarmclock.R;
 
@@ -42,7 +43,7 @@ public class AddToTimelineListener implements RequestListener {
 			showAlertDialog("added to timeline!", json.toString(0));
 			mAlarmModel.setPid(pid);
 		} catch (JSONException e) {
-			Log.e("SAC", "Error: " + e.toString());
+			Log.e(AlarmClockActivity.TAG, "Error: " + e.toString());
 		}
 	}
 

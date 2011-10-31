@@ -47,7 +47,7 @@ public class EditAlarmActivity extends Activity implements OnTimeSetListener {
 		if (newAlarm) {
 			Date now = new Date();
 			mAlarm = new AlarmModel(true, now.getHours(), now.getMinutes(),
-					new HashSet<Integer>(), "", true, "");
+					new HashSet<Integer>(), "", true, getString(R.string.alarm_label_default));
 		}
 
 		hour = mAlarm.getHour();
