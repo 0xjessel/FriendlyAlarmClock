@@ -1,6 +1,6 @@
 package net.jessechen.fragments;
 
-import net.jessechen.socialalarmclock.R;
+import net.jessechen.friendlyalarmclock.R;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;

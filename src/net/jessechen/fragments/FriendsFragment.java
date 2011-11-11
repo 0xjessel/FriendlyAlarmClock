@@ -3,7 +3,7 @@ package net.jessechen.fragments;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import net.jessechen.socialalarmclock.R;
+import net.jessechen.friendlyalarmclock.R;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;

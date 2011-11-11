@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import net.jessechen.alarmclock.AlarmReceiver;
 import net.jessechen.alarmclock.EditAlarmActivity;
 import net.jessechen.models.AlarmModel;
-import net.jessechen.socialalarmclock.R;
+import net.jessechen.friendlyalarmclock.R;
 import net.jessechen.utils.AlarmAdapter;
 import net.jessechen.utils.ServerUtil;
 import android.app.AlarmManager;

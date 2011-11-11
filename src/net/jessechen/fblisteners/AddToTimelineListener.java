@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 
 import net.jessechen.alarmclock.AlarmClockActivity;
 import net.jessechen.models.AlarmModel;
-import net.jessechen.socialalarmclock.R;
+import net.jessechen.friendlyalarmclock.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

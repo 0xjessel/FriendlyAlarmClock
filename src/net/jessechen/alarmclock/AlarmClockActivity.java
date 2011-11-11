@@ -10,7 +10,7 @@ import java.net.URL;
 import net.jessechen.fblisteners.AppRequestsListener;
 import net.jessechen.fblisteners.LogoutListener;
 import net.jessechen.secret.Secret;
-import net.jessechen.socialalarmclock.R;
+import net.jessechen.friendlyalarmclock.R;
 import net.jessechen.utils.ServerUtil;
 
 import org.json.JSONObject;

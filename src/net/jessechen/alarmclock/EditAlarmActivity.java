@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 import net.jessechen.models.AlarmModel;
-import net.jessechen.socialalarmclock.R;
+import net.jessechen.friendlyalarmclock.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;

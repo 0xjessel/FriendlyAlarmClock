@@ -3,7 +3,7 @@ package net.jessechen.utils;
 import java.util.List;
 
 import net.jessechen.models.AlarmModel;
-import net.jessechen.socialalarmclock.R;
+import net.jessechen.friendlyalarmclock.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
