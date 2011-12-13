@@ -23,8 +23,8 @@ import com.facebook.android.Util;
 
 public class ServerUtil {
 
-	public static final String FB_GRAPH_URL = "https://graph.facebook.com";
-	public static final String BASE_URL = "http://www.socialalarmclock.jessechen.net";
+	public static final String FB_GRAPH_URL = "https://graph.facebook.com/";
+	public static final String BASE_URL = "http://www.friendlyalarmclock.jessechen.net";
 	public static final String POST_ALARM_URL = BASE_URL
 			+ "/opengraph/alarm.php";
 	public static final String NAMESPACE = "friendlyalarmclock";

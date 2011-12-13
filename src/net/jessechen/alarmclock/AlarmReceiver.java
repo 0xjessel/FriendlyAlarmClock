@@ -41,10 +41,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 			final AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 			if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
 				mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-				mMediaPlayer.setLooping(true);
+				mMediaPlayer.setLooping(false);
 				mMediaPlayer.prepare();
 				mMediaPlayer.start();
-				this.wait(2000);
+				this.wait(500);
 				mMediaPlayer.stop();
 			}
 		} catch (Exception ex) {

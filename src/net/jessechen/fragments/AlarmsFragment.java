@@ -2,15 +2,13 @@ package net.jessechen.fragments;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import net.jessechen.alarmclock.AlarmReceiver;
 import net.jessechen.alarmclock.EditAlarmActivity;
-import net.jessechen.models.AlarmModel;
 import net.jessechen.friendlyalarmclock.R;
+import net.jessechen.models.AlarmModel;
 import net.jessechen.utils.AlarmAdapter;
 import net.jessechen.utils.ServerUtil;
 import android.app.AlarmManager;
